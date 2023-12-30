@@ -32,3 +32,6 @@
   <br>
 
 - jika semuanya sudah silahkan lihat komentar pada contoh aplikasi di atas.
+- untuk menjalankan aplikasi
+
+       go run main.go
