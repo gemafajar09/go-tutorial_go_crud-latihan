@@ -6,4 +6,5 @@ type Pengalaman struct {
 	TanggalAkhir string `json:"tanggal_akhir"`
 	Perusahaan   string `json:"perusahaan"`
 	Jobdesk      string `json:"jobdesk"`
+	Foto         string `json:"foto"`
 }

@@ -1,7 +1,11 @@
 package controllers
 
 import (
+	"fmt"
+	"io"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -23,6 +27,7 @@ func Getpengalaman(c *gin.Context) {
 func SavePengalaman(c *gin.Context) {
 	// memanggi file mode pengalaman
 	var pengalaman models.Pengalaman
+
 	// cek apakah data yg dikirim ada atau kosong
 	if err := c.ShouldBindJSON(&pengalaman); err != nil {
 		// jika data yang dikirm kosong maka kirim response
@@ -111,4 +116,38 @@ func DeletePengalaman(c *gin.Context) {
 
 	// gin.H untuk menambahkan header khusus ke respons HTTP
 	c.JSON(http.StatusOK, gin.H{"data": pengalaman, "message": "Data Berhasil Di Hapus"})
+}
+
+func UploadFile(c *gin.Context) string {
+	// cek file foto dari inputan
+	file, header, err := c.Request.FormFile("foto")
+
+	// cek jika file ada atau tidak
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
+		return ""
+	}
+
+	// deklarasi nama file
+	filename := header.Filename
+
+	// lokasi tempat file disimpan
+	out, err := os.Create("public/" + filename)
+
+	// cek apaka berhasil atau gagal
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// defer adalah sebuah kata kunci yang digunakan untuk menjadwalkan eksekusi suatu fungsi hingga fungsi yang berisi
+	defer out.Close()
+	// pindahkan file foto kedalam file tmp
+	_, err = io.Copy(out, file)
+	if err != nil {
+		log.Fatal(err)
+		return ""
+	}
+
+	return filename
+
 }
